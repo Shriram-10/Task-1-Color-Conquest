@@ -59,7 +59,10 @@ fun Navigation() {
             HomePage(navController = navController)
         }
         composable(route = Screen.PlayerInformation.route) {
-            PlayerPage()
+            PlayerPage(navController = navController)
+        }
+        composable(route = Screen.GamePage.route){
+            GamePage(navController = navController)
         }
     }
 }

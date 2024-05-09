@@ -29,9 +29,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 
 @Composable
-fun PlayerPage() {
+fun PlayerPage(navController: NavController) {
 
     var goGame by remember { mutableStateOf(false) }
     Column (
@@ -48,7 +49,7 @@ fun PlayerPage() {
         Spacer(modifier = Modifier.height(56.dp))
 
         Button(
-            onClick = { },
+            onClick = {  },
             shape = CutCornerShape(
                 topStartPercent = 45,
                 topEndPercent = 45,
@@ -188,6 +189,6 @@ fun PlayerPage() {
         }
     }
     if(goGame) {
-        GamePage()
+        navController.navigate(Screen.GamePage.route)
     }
 }
