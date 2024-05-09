@@ -1,7 +1,9 @@
 package com.example.task1colourconquest
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -45,6 +48,8 @@ import androidx.navigation.NavController
 @Composable
 fun GamePage(navController: NavController, name1: String?, name2: String?) {
 
+    val nonNullableString1: String = requireNotNull(name1) { "Player 1" }
+    val nonNullableString2: String = requireNotNull(name2) { "Player 2" }
     var exitDialog by remember { mutableStateOf(false) }
 
     if(exitDialog) {
@@ -157,12 +162,7 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                brush = gradientBackground(
-                    colors = gradientColorList,
-                    isVerticalGradient = true
-                )
-            )
+            .background(color = Color(0xFFED6A5E))
     ){
         Spacer(modifier = Modifier.height(24.dp))
         Row(
@@ -177,32 +177,13 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
                     Card(
                         modifier = Modifier
                             .width(80.dp)
-                            .height(56.dp)
-                            /*.border(
-                                border = BorderStroke(4.dp, Color.Black),
-                                shape = RoundedCornerShape(topEndPercent = 50, bottomEndPercent = 50)
-                            )
-                            .drawBehind {
-                                val borderSize = 8.dp.toPx()
-                                drawLine(
-                                    color = Color.Black,
-                                    start = Offset(0f,0f),
-                                    end = Offset(0.68f * size.width , 0f),
-                                    strokeWidth = borderSize
-                                )
-                                drawLine(
-                                    color = Color.Black,
-                                    start = Offset(0f, size.height),
-                                    end = Offset(0.68f * size.width , size.height),
-                                    strokeWidth = borderSize
-                                )
-                            }*/,
+                            .height(56.dp),
                         colors = CardDefaults.cardColors(
                             containerColor = Color.DarkGray,
                             contentColor = Color(0xFF323232)
                         ),
                         elevation = CardDefaults.cardElevation(
-                            defaultElevation = 8.dp
+                            defaultElevation = 16.dp
                         ),
                         shape = RoundedCornerShape(
                             topEndPercent = 50,
@@ -215,19 +196,40 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
                     Spacer(modifier = Modifier.width(6.dp))
 
                     Card(
+                        shape = CutCornerShape(
+                            topStartPercent = 45,
+                            bottomStartPercent = 45,
+                        ),
                         modifier = Modifier
                             .height(56.dp)
-                            .width(150.dp),
-                        shape = CutCornerShape(
-                            topStartPercent = 60,
-                            bottomStartPercent = 60,
+                            .width(150.dp)
+                            .clip(
+                                shape = RoundedCornerShape(
+                                    topEndPercent = 10,
+                                    bottomEndPercent = 10
+                                )
                             ),
                         colors = CardDefaults.cardColors(
                             containerColor = Color.DarkGray,
                             contentColor = Color(0xFF0FA6F7)
+                        ),
+                        border = BorderStroke(
+                            width = 2.dp,
+                            color = Color.Black
                         )
                     ){
-
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ){
+                            Text(
+                                text = nonNullableString1.uppercase(),
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 28.sp,
+                                color = Color(0xFF0FA6F7),
+                                modifier = Modifier.rotate(180f)
+                            )
+                        }
                     }
                 }
             }
@@ -273,18 +275,17 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
                 items(25){ i->
                     Box(
                         modifier = Modifier
-                            .width(25.dp)
                             .height(72.dp)
                             .padding(4.dp)
                     ) {
                         Card(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .clip(shape = RoundedCornerShape(2))
+                                .clip(shape = RoundedCornerShape(5))
                                 .shadow(
-                                    elevation = 16.dp,
-                                    clip = true,
-                                    ambientColor = Color.Cyan,
+                                    elevation = 24.dp,
+                                    clip = false,
+                                    ambientColor = Color(0xFFED6A5E),
                                     spotColor = Color.Black
                                 ),
                             colors = CardDefaults.cardColors(
@@ -310,17 +311,37 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
             Card(
                 modifier = Modifier
                     .height(56.dp)
-                    .width(150.dp),
+                    .width(150.dp)
+                    .clip(
+                        shape = RoundedCornerShape(
+                            topStartPercent = 10,
+                            bottomStartPercent = 10
+                        )
+                    ),
                 shape = CutCornerShape(
-                    topEndPercent = 60,
-                    bottomEndPercent = 60,
+                    topEndPercent = 45,
+                    bottomEndPercent = 45,
                 ),
                 colors = CardDefaults.cardColors(
                     containerColor = Color.DarkGray,
-                    contentColor = Color(0xFF0FA6F7)
+                    contentColor = Color(0xFFED6A5E)
+                ),
+                border = BorderStroke(
+                    width = 2.dp,
+                    color = Color.Black
                 )
             ){
-
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ){
+                    Text(
+                        text = nonNullableString2.uppercase(),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 28.sp,
+                        color = Color(0xFFED6A5E)
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.width(6.dp))
@@ -328,32 +349,13 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
             Card(
                 modifier = Modifier
                     .width(80.dp)
-                    .height(56.dp)
-                /*.border(
-                    border = BorderStroke(4.dp, Color.Black),
-                    shape = RoundedCornerShape(topEndPercent = 50, bottomEndPercent = 50)
-                )
-                .drawBehind {
-                    val borderSize = 8.dp.toPx()
-                    drawLine(
-                        color = Color.Black,
-                        start = Offset(0f,0f),
-                        end = Offset(0.68f * size.width , 0f),
-                        strokeWidth = borderSize
-                    )
-                    drawLine(
-                        color = Color.Black,
-                        start = Offset(0f, size.height),
-                        end = Offset(0.68f * size.width , size.height),
-                        strokeWidth = borderSize
-                    )
-                }*/,
+                    .height(56.dp),
                 colors = CardDefaults.cardColors(
                     containerColor = Color.DarkGray,
                     contentColor = Color(0xFF323232)
                 ),
                 elevation = CardDefaults.cardElevation(
-                    defaultElevation = 8.dp
+                    defaultElevation = 16.dp
                 ),
                 shape = RoundedCornerShape(
                     topStartPercent = 50,

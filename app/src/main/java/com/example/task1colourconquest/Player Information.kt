@@ -241,7 +241,7 @@ fun PlayerPage(navController: NavController) {
 
         Button(
             onClick = {
-                navController.navigate(Screen.GamePage.route.withArgs(player1Name, player2Name))
+                navController.navigate(Screen.GamePage.withArgs(player1Name, player2Name))
             },
             modifier = Modifier
                 .width(164.dp)
