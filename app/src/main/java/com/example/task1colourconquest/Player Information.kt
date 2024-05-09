@@ -3,9 +3,11 @@ package com.example.task1colourconquest
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -27,14 +29,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun PlayerPage(navController: NavController) {
 
     var goGame by remember { mutableStateOf(false) }
+
     Column (
         modifier = Modifier
             .fillMaxSize()
@@ -74,98 +79,80 @@ fun PlayerPage(navController: NavController) {
 
         Spacer(modifier = Modifier.height(100.dp))
 
-        Row (modifier = Modifier.fillMaxWidth()) {
-
+        Row(
+            modifier = Modifier.fillMaxWidth()
+        ){
             Spacer(modifier = Modifier.width(22.dp))
-
-            Card(modifier = Modifier
-                .width(175.dp)
-                .height(100.dp),
-                shape = RoundedCornerShape(
-                    topStartPercent = 30,
-                    topEndPercent = 30,
-                    bottomStartPercent = 30,
-                    bottomEndPercent = 30),
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 16.dp
-                ),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFF3E4171)
-                )) {
-
+            Column(
+                modifier = Modifier
+                    .width(175.dp)
+                    .height(245.dp)
+            ){
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                ){
+                    Image(
+                        painter = painterResource(id = R.drawable.playercard),
+                        contentDescription = "Player Cards",
+                        modifier = Modifier.aspectRatio(7f/10f)
+                    )
+                }
             }
 
-            Spacer(modifier = Modifier.width(20.dp))
+            Spacer(modifier = Modifier.width(8.dp))
 
-            Card(modifier = Modifier
-                .width(175.dp)
-                .height(100.dp),
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 16.dp
-                ),
-                shape = RoundedCornerShape(
-                    topStartPercent = 30,
-                    topEndPercent = 30,
-                    bottomStartPercent = 30,
-                    bottomEndPercent = 30),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFF3E4171)
-                )) {
+            Column(
+                modifier = Modifier
+                    .width(175.dp)
+                    .height(245.dp)
+            ){
+                Spacer(modifier = Modifier.height(22.dp))
+                Card(modifier = Modifier
+                    .width(175.dp)
+                    .height(96.dp),
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 16.dp
+                    ),
+                    shape = RoundedCornerShape(
+                        topStartPercent = 30,
+                        topEndPercent = 30,
+                        bottomStartPercent = 30,
+                        bottomEndPercent = 30),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color(0xFF3E4171)
+                    )
+                ) {
+
+                }
+
+                Spacer(modifier = Modifier.height(26.dp))
+
+                Card(modifier = Modifier
+                    .width(175.dp)
+                    .height(96.dp),
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 16.dp
+                    ),
+                    shape = RoundedCornerShape(
+                        topStartPercent = 30,
+                        topEndPercent = 30,
+                        bottomStartPercent = 30,
+                        bottomEndPercent = 30),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color(0xFF3E4171)
+                    )
+                ) {
+
+                }
             }
-
-            Spacer(modifier = Modifier.width(20.dp))
-        }
-
-        Spacer(modifier = Modifier.height(45.dp))
-
-        Row (modifier = Modifier.fillMaxWidth()) {
-
-            Spacer(modifier = Modifier
-                .width(22.dp))
-
-            Card(modifier = Modifier
-                .width(175.dp)
-                .height(100.dp),
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 16.dp
-                ),
-                shape = RoundedCornerShape(
-                    topStartPercent = 30,
-                    topEndPercent = 30,
-                    bottomStartPercent = 30,
-                    bottomEndPercent = 30),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFF3E4171)
-                )) {
-
-            }
-
-            Spacer(modifier = Modifier.width(20.dp))
-
-            Card(modifier = Modifier
-                .width(175.dp)
-                .height(100.dp),
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 16.dp
-                ),
-                shape = RoundedCornerShape(
-                    topStartPercent = 30,
-                    topEndPercent = 30,
-                    bottomStartPercent = 30,
-                    bottomEndPercent = 30),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFF3E4171)
-                )) {
-            }
-
-            Spacer(modifier = Modifier.width(20.dp))
         }
 
         Image(
             painter = painterResource(id = R.drawable.players),
-            contentDescription = "Players")
+            contentDescription = "players"
+        )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(56.dp))
 
         Button(
             onClick = {
@@ -191,4 +178,10 @@ fun PlayerPage(navController: NavController) {
     if(goGame) {
         navController.navigate(Screen.GamePage.route)
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PlayerPagePreview(){
+    PlayerPage(navController = rememberNavController())
 }

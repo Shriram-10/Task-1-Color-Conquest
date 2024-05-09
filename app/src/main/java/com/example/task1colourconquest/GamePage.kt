@@ -56,9 +56,9 @@ fun GamePage(navController: NavController) {
             exitDialog = false
         },
             confirmButton = {
-                Row(
+                Column(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ){
                     Button(
                         onClick = {
@@ -66,7 +66,7 @@ fun GamePage(navController: NavController) {
                     },
                         modifier = Modifier
                             .height(40.dp)
-                            .width(120.dp),
+                            .width(150.dp),
                         enabled = true,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(0xFFED6A5E),
@@ -85,13 +85,16 @@ fun GamePage(navController: NavController) {
                             color = Color.White
                         )
                     }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
                     Button(
                         onClick = {
                             navController.navigate(Screen.HomePage.route)
                         },
                         modifier = Modifier
                             .height(40.dp)
-                            .width(80.dp),
+                            .width(150.dp),
                         enabled = true,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(0xFFED6A5E),
@@ -103,6 +106,34 @@ fun GamePage(navController: NavController) {
                         ),
                         shape = RoundedCornerShape(10)
                         ) {
+                        Text(
+                            text = "Leave Game",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp,
+                            color = Color.White
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Button(
+                        onClick = {
+
+                        },
+                        modifier = Modifier
+                            .height(40.dp)
+                            .width(150.dp),
+                        enabled = true,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFFED6A5E),
+                            contentColor = Color.White
+                        ),
+                        elevation = ButtonDefaults.buttonElevation(
+                            defaultElevation = 8.dp,
+                            pressedElevation = 12.dp
+                        ),
+                        shape = RoundedCornerShape(10)
+                    ) {
                         Text(
                             text = "Exit",
                             fontWeight = FontWeight.Bold,
@@ -263,6 +294,9 @@ fun GamePage(navController: NavController) {
                             colors = CardDefaults.cardColors(
                                 containerColor = Color(0xFFF2E6D1)
                             ),
+                            onClick = {
+
+                            }
                         ){
 
                         }
