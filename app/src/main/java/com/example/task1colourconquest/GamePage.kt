@@ -27,11 +27,13 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -61,10 +63,44 @@ var clicked = mutableStateListOf<Boolean>(
     false,false,false,false,false
 )
 
+var colorTile = mutableStateListOf<Color>(
+    Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),
+    Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),
+    Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),
+    Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),
+    Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1)
+)
+
+var colorButton = mutableStateListOf<Color>(
+    Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),
+    Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),
+    Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),
+    Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),
+    Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1)
+)
+
+var playerCover : SnapshotStateList<SnapshotStateList<Boolean>> = mutableStateListOf(
+    mutableStateListOf(
+        false, false, false, false, false,
+        false, false, false, false, false,
+        false, false, false, false, false,
+        false, false, false, false, false,
+        false, false, false, false, false
+    ),
+    mutableStateListOf(
+        false, false, false, false, false,
+        false, false, false, false, false,
+        false, false, false, false, false,
+        false, false, false, false, false,
+        false, false, false, false, false
+    )
+)
+
 var counter = mutableStateOf(0)
 var backgroundColor = mutableStateOf(Color(0xFFED6A5E))
 var player1Score = mutableStateOf(0)
 var player2Score = mutableStateOf(0)
+val otherPlayer = mutableStateOf(if(counter.value % 2 == 0) 1 else 0)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -114,12 +150,21 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
                     Button(
                         onClick = {
                             exitDialog = false
-                            backgroundColor.value = Color(0xFFED6A5E)
+                            navController.navigate(Screen.HomePage.route)
                             counter.value = 0
                             for(t in 0 .. 24){
                                 points[t] = 0
                             }
-                            navController.navigate(Screen.HomePage.route)
+                            backgroundColor.value = Color(0xFFED6A5E)
+                            player1Score.value = 0
+                            player2Score.value = 0
+                            for(i in 0 .. 1) {
+                                for (j in 0..24) {
+                                    colorTile[j] = Color(0xFFF2E6D1)
+                                    colorButton[j] = Color(0xFFF2E6D1)
+                                    playerCover[i][j] = false
+                                }
+                            }
                         },
                         modifier = Modifier
                             .height(40.dp)
@@ -319,20 +364,27 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
                                 .fillMaxSize(),
                             shape = RoundedCornerShape(percent = 15),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFFF2E6D1)
+                                containerColor = colorTile[i]
                             ),
                             onClick = {
                                 clicked[i] = true
                             },
                             elevation = ButtonDefaults.buttonElevation(
-                                defaultElevation = 32.dp,
-                                pressedElevation = 64.dp
+                                defaultElevation = 8.dp,
+                                pressedElevation = 12.dp
                             )
                         ){
                             Box(
                                 modifier = Modifier.fillMaxSize(),
                                 contentAlignment = Alignment.Center
                             ){
+                                Box(
+                                    modifier = Modifier
+                                        .clip(shape = RoundedCornerShape(50)),
+                                    contentAlignment = Alignment.Center
+                                ){
+
+                                }
                                 Text(
                                     text = points[i].toString(),
                                     fontWeight = FontWeight.ExtraBold,
@@ -342,10 +394,7 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
                             }
                         }
                     }
-                    if(points[i] > 1) {
-
-                    }
-                    if(clicked[i]) {
+                    if((clicked[i] && (counter.value == 1 || counter.value == 0)) || (clicked[i] && playerCover[otherPlayer.value][i])) {
                         counter.value++
                         incrementAndExpansion(i)
                         clicked[i] = false
@@ -427,37 +476,83 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
 }
 
 fun incrementAndExpansion(i: Int) {
+
     if(counter.value % 2 == 1) {
         backgroundColor.value = Color(0xFF0FA6F7)
+        playerCover[counter.value % 2][i] = true
     } else {
         backgroundColor.value = Color(0xFFED6A5E)
+        playerCover[counter.value % 2][i] = true
     }
+
     if(counter.value == 2 || counter.value == 1) {
         points[i] += 3
-        if(counter.value % 2 == 1){
+        if(counter.value % 2 == 1) {
+            colorButton[i] = Color(0xFFED6A5E)
+            colorTile[i] = Color(0xFFF2D1CD)
             player1Score.value += 3
+            playerCover[counter.value % 2][i] = true
         } else {
+            colorButton[i] = Color(0xFF0FA6F7)
+            colorTile[i] = Color(0xFFC7F1FD)
             player2Score.value += 3
+            playerCover[counter.value % 2][i] = true
         }
     } else {
-        val surround = mutableListOf(
+        var surround = mutableListOf(
             i - 5,
             i - 1,
             i + 1,
             i + 5
         )
-        val surroundFilter = surround.filter { it in 0..24 }
+
+        val surroundFilter = (surround.filter { it in 0..24 }).toMutableList()
+
+        if(i != 0 && i != 4 && i != 20 && i != 24){
+            if (i % 5 == 4) {
+                surroundFilter.remove(surroundFilter[2])
+            } else if (i % 5 == 0) {
+                surroundFilter.remove(surroundFilter[1])
+            }
+        } else if(i == 4) {
+            surroundFilter.remove(surroundFilter[1])
+        }
 
         if(points[i] == 3) {
             points[i] = 0
-        } else {
-            for(j in surroundFilter) {
+            playerCover[counter.value % 2][i] = false
+            colorButton[i] = Color(0xFFF2E6D1)
+            colorTile[i] = Color(0xFFF2E6D1)
+
+            for (j in surroundFilter) {
+                if(counter.value % 2 == 1){
+                    colorButton[j] = Color(0xFFED6A5E)
+                    colorTile[j] = Color(0xFFF2D1CD)
+                } else {
+                    colorButton[j] = Color(0xFF0FA6F7)
+                    colorTile[j] = Color(0xFFC7F1FD)
+                }
+            }
+
+            surroundFilter.forEach{ j ->
                 points[j]++
-                if(points[j] > 3){
-                    points[j] = 0
+                if(points[j] > 3) {
                     incrementAndExpansion(j)
                 }
+                playerCover[counter.value % 2][j] = true
+            }
+        } else {
+            points[i]++
+
+            if(counter.value % 2 == 1){
+                colorButton[i] = Color(0xFFED6A5E)
+                colorTile[i] = Color(0xFFF2D1CD)
+            } else {
+                colorButton[i] = Color(0xFF0FA6F7)
+                colorTile[i] = Color(0xFFC7F1FD)
             }
         }
     }
 }
+
+
