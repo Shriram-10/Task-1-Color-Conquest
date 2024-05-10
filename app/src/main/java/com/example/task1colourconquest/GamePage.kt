@@ -448,12 +448,12 @@ fun incrementAndExpansion(i: Int) {
         )
         val surroundFilter = surround.filter { it in 0..24 }
 
-        if(points[i] == 4) {
+        if(points[i] == 3) {
             points[i] = 0
         } else {
             for(j in surroundFilter) {
                 points[j]++
-                if(points[j] > 4){
+                if(points[j] > 3){
                     points[j] = 0
                     incrementAndExpansion(j)
                 }
