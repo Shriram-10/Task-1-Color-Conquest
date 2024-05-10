@@ -28,6 +28,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -43,6 +44,27 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+
+var points = mutableStateListOf<Int>(
+    0,0,0,0,0,
+    0,0,0,0,0,
+    0,0,0,0,0,
+    0,0,0,0,0,
+    0,0,0,0,0
+)
+
+var clicked = mutableStateListOf<Boolean>(
+    false,false,false,false,false,
+    false,false,false,false,false,
+    false,false,false,false,false,
+    false,false,false,false,false,
+    false,false,false,false,false
+)
+
+var counter = mutableStateOf(0)
+var backgroundColor = mutableStateOf(Color(0xFFED6A5E))
+var player1Score = mutableStateOf(0)
+var player2Score = mutableStateOf(0)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -91,6 +113,12 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
 
                     Button(
                         onClick = {
+                            exitDialog = false
+                            backgroundColor.value = Color(0xFFED6A5E)
+                            counter.value = 0
+                            for(t in 0 .. 24){
+                                points[t] = 0
+                            }
                             navController.navigate(Screen.HomePage.route)
                         },
                         modifier = Modifier
@@ -162,7 +190,7 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color(0xFFED6A5E))
+            .background(color = backgroundColor.value)
     ){
         Spacer(modifier = Modifier.height(24.dp))
         Row(
@@ -174,15 +202,16 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
                 Spacer(modifier = Modifier.height(30.dp))
 
                 Row{
-                    Card(
+                    Button(
+                        onClick = {},
                         modifier = Modifier
                             .width(80.dp)
                             .height(56.dp),
-                        colors = CardDefaults.cardColors(
+                        colors = ButtonDefaults.buttonColors(
                             containerColor = Color.DarkGray,
                             contentColor = Color(0xFF323232)
                         ),
-                        elevation = CardDefaults.cardElevation(
+                        elevation = ButtonDefaults.buttonElevation(
                             defaultElevation = 16.dp
                         ),
                         shape = RoundedCornerShape(
@@ -190,7 +219,12 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
                             bottomEndPercent = 50
                         )
                     ){
-
+                        Text(
+                            text = player2Score.value.toString(),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 28.sp,
+                            color = Color(0xFF0FA6F7)
+                        )
                     }
 
                     Spacer(modifier = Modifier.width(6.dp))
@@ -210,8 +244,8 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
                                 )
                             ),
                         colors = CardDefaults.cardColors(
-                            containerColor = Color.DarkGray,
-                            contentColor = Color(0xFF0FA6F7)
+                            contentColor = Color(0xFF0FA6F7),
+                            containerColor = Color.DarkGray
                         ),
                         border = BorderStroke(
                             width = 2.dp,
@@ -222,8 +256,9 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center
                         ){
+
                             Text(
-                                text = nonNullableString1.uppercase(),
+                                text = nonNullableString2.uppercase(),
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 28.sp,
                                 color = Color(0xFF0FA6F7),
@@ -276,27 +311,44 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
                     Box(
                         modifier = Modifier
                             .height(72.dp)
-                            .padding(4.dp)
+                            .padding(4.dp),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Card(
+                        Button(
                             modifier = Modifier
-                                .fillMaxSize()
-                                .clip(shape = RoundedCornerShape(5))
-                                .shadow(
-                                    elevation = 24.dp,
-                                    clip = false,
-                                    ambientColor = Color(0xFFED6A5E),
-                                    spotColor = Color.Black
-                                ),
-                            colors = CardDefaults.cardColors(
+                                .fillMaxSize(),
+                            shape = RoundedCornerShape(percent = 15),
+                            colors = ButtonDefaults.buttonColors(
                                 containerColor = Color(0xFFF2E6D1)
                             ),
                             onClick = {
-
-                            }
+                                clicked[i] = true
+                            },
+                            elevation = ButtonDefaults.buttonElevation(
+                                defaultElevation = 32.dp,
+                                pressedElevation = 64.dp
+                            )
                         ){
-
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ){
+                                Text(
+                                    text = points[i].toString(),
+                                    fontWeight = FontWeight.ExtraBold,
+                                    fontSize = 32.sp,
+                                    color = Color.Black
+                                )
+                            }
                         }
+                    }
+                    if(points[i] > 1) {
+
+                    }
+                    if(clicked[i]) {
+                        counter.value++
+                        incrementAndExpansion(i)
+                        clicked[i] = false
                     }
                 }
             }
@@ -336,7 +388,7 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
                     contentAlignment = Alignment.Center
                 ){
                     Text(
-                        text = nonNullableString2.uppercase(),
+                        text = nonNullableString1.uppercase(),
                         fontWeight = FontWeight.Bold,
                         fontSize = 28.sp,
                         color = Color(0xFFED6A5E)
@@ -346,15 +398,16 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
 
             Spacer(modifier = Modifier.width(6.dp))
 
-            Card(
+            Button(
+                onClick = {},
                 modifier = Modifier
                     .width(80.dp)
                     .height(56.dp),
-                colors = CardDefaults.cardColors(
+                colors = ButtonDefaults.buttonColors(
                     containerColor = Color.DarkGray,
                     contentColor = Color(0xFF323232)
                 ),
-                elevation = CardDefaults.cardElevation(
+                elevation = ButtonDefaults.buttonElevation(
                     defaultElevation = 16.dp
                 ),
                 shape = RoundedCornerShape(
@@ -362,7 +415,48 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
                     bottomStartPercent = 50
                 )
             ){
+                Text(
+                    text = player1Score.value.toString(),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 28.sp,
+                    color = Color(0xFFED6A5E)
+                )
+            }
+        }
+    }
+}
 
+fun incrementAndExpansion(i: Int) {
+    if(counter.value % 2 == 1) {
+        backgroundColor.value = Color(0xFF0FA6F7)
+    } else {
+        backgroundColor.value = Color(0xFFED6A5E)
+    }
+    if(counter.value == 2 || counter.value == 1) {
+        points[i] += 3
+        if(counter.value % 2 == 1){
+            player1Score.value += 3
+        } else {
+            player2Score.value += 3
+        }
+    } else {
+        val surround = mutableListOf(
+            i - 5,
+            i - 1,
+            i + 1,
+            i + 5
+        )
+        val surroundFilter = surround.filter { it in 0..24 }
+
+        if(points[i] == 4) {
+            points[i] = 0
+        } else {
+            for(j in surroundFilter) {
+                points[j]++
+                if(points[j] > 4){
+                    points[j] = 0
+                    incrementAndExpansion(j)
+                }
             }
         }
     }
