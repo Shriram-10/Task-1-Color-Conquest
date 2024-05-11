@@ -47,20 +47,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
-var points = mutableStateListOf<Int>(
-    0,0,0,0,0,
-    0,0,0,0,0,
-    0,0,0,0,0,
-    0,0,0,0,0,
-    0,0,0,0,0
-)
-
 var clicked = mutableStateListOf<Boolean>(
     false,false,false,false,false,
     false,false,false,false,false,
     false,false,false,false,false,
     false,false,false,false,false,
     false,false,false,false,false
+)
+
+
+var ColoringBG = mutableStateListOf<Color>(
+    Color(0xFF0FA6F7),Color(0xFFED6A5E)
+)
+
+var Coloring = mutableStateListOf<Color>(
+     Color(0xFFC7F1FD),Color(0xFFF2D1CD)
 )
 
 var colorTile = mutableStateListOf<Color>(
@@ -96,11 +97,31 @@ var playerCover : SnapshotStateList<SnapshotStateList<Boolean>> = mutableStateLi
     )
 )
 
+var playerPoints : SnapshotStateList<SnapshotStateList<Int>> = mutableStateListOf(
+    mutableStateListOf(
+        0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0
+    ),
+    mutableStateListOf(
+        0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0
+    )
+)
+
 var counter = mutableStateOf(0)
-var backgroundColor = mutableStateOf(Color(0xFFED6A5E))
+var backgroundColor = mutableStateOf(Color(0xFF0FA6F7))
 var player1Score = mutableStateOf(0)
 var player2Score = mutableStateOf(0)
-val otherPlayer = mutableStateOf(if(counter.value % 2 == 0) 1 else 0)
+val thisPlayer = mutableStateOf(1)
+val otherPlayer = mutableStateOf(0)
+val r = mutableStateOf(5)
+val c = mutableStateOf(5)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -109,6 +130,11 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
     val nonNullableString1: String = requireNotNull(name1) { "Player 1" }
     val nonNullableString2: String = requireNotNull(name2) { "Player 2" }
     var exitDialog by remember { mutableStateOf(false) }
+    var winnerDialog by remember { mutableStateOf(false) }
+
+    if(winnerDialog) {
+        DisplayWinner()
+    }
 
     if(exitDialog) {
         AlertDialog(onDismissRequest = {
@@ -152,8 +178,10 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
                             exitDialog = false
                             navController.navigate(Screen.HomePage.route)
                             counter.value = 0
-                            for(t in 0 .. 24){
-                                points[t] = 0
+                            for(b in 0..1){
+                                for(t in 0 .. r.value * c.value){
+                                    playerPoints[b][t] = 0
+                                }
                             }
                             backgroundColor.value = Color(0xFFED6A5E)
                             player1Score.value = 0
@@ -161,10 +189,11 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
                             for(i in 0 .. 1) {
                                 for (j in 0..24) {
                                     colorTile[j] = Color(0xFFF2E6D1)
-                                    colorButton[j] = Color(0xFFF2E6D1)
                                     playerCover[i][j] = false
                                 }
                             }
+                            thisPlayer.value = 1
+                            otherPlayer.value = 0
                         },
                         modifier = Modifier
                             .height(40.dp)
@@ -235,7 +264,7 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = backgroundColor.value)
+            .background(color = ColoringBG[thisPlayer.value])
     ){
         Spacer(modifier = Modifier.height(24.dp))
         Row(
@@ -316,7 +345,7 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
 
             Column(
                 modifier = Modifier.width(60.dp),
-                horizontalAlignment = Alignment.End
+                horizontalAlignment = Alignment.End,
             ){
                 Card(
                     modifier = Modifier
@@ -352,7 +381,7 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
                 modifier = Modifier.width(375.dp),
                 columns = GridCells.Fixed(5),
             ) {
-                items(25){ i->
+                items(r.value * c.value){ i->
                     Box(
                         modifier = Modifier
                             .height(72.dp)
@@ -364,7 +393,7 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
                                 .fillMaxSize(),
                             shape = RoundedCornerShape(percent = 15),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = colorTile[i]
+                                containerColor = colorButton[i]
                             ),
                             onClick = {
                                 clicked[i] = true
@@ -386,7 +415,7 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
 
                                 }
                                 Text(
-                                    text = points[i].toString(),
+                                    text = if (playerPoints[0][i] == 0) playerPoints[1][i].toString() else playerPoints[0][i].toString(),
                                     fontWeight = FontWeight.ExtraBold,
                                     fontSize = 32.sp,
                                     color = Color.Black
@@ -394,10 +423,28 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
                             }
                         }
                     }
-                    if((clicked[i] && (counter.value == 1 || counter.value == 0)) || (clicked[i] && playerCover[otherPlayer.value][i])) {
-                        counter.value++
-                        incrementAndExpansion(i)
-                        clicked[i] = false
+                    if(clicked[i]) {
+                        if (counter.value == 1 || counter.value == 0) {
+                            if(!playerCover[otherPlayer.value][i]) {
+                                counter.value++
+                                incrementAndExpansion(i, thisPlayer.value, otherPlayer.value)
+                                clicked[i] = false
+                                player1Score.value = playerPoints[1].sum()
+                                player2Score.value = playerPoints[0].sum()
+                                if(player1Score.value == 0 || player2Score.value == 0) {
+                                    winnerDialog = true
+                                }
+                            } else if (playerCover[otherPlayer.value][i]){
+                                clicked[i] = false
+                            }
+                        } else {
+                            counter.value++
+                            incrementAndExpansion(i, thisPlayer.value, otherPlayer.value)
+                            clicked[i] = false
+                            player1Score.value = playerPoints[1].sum()
+                            player2Score.value = playerPoints[0].sum()
+                        }
+
                     }
                 }
             }
@@ -475,84 +522,95 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
     }
 }
 
-fun incrementAndExpansion(i: Int) {
+fun incrementAndExpansion(i: Int, Player: Int, OtherPlayer: Int) {
+    var k: Int = 0
+    backgroundColor.value = ColoringBG[Player]
 
-    if(counter.value % 2 == 1) {
-        backgroundColor.value = Color(0xFF0FA6F7)
-        playerCover[counter.value % 2][i] = true
-    } else {
-        backgroundColor.value = Color(0xFFED6A5E)
-        playerCover[counter.value % 2][i] = true
-    }
-
-    if(counter.value == 2 || counter.value == 1) {
-        points[i] += 3
-        if(counter.value % 2 == 1) {
-            colorButton[i] = Color(0xFFED6A5E)
-            colorTile[i] = Color(0xFFF2D1CD)
-            player1Score.value += 3
-            playerCover[counter.value % 2][i] = true
+    if (playerPoints[Player][i] < 3) {
+        if(counter.value == 1 || counter.value == 2) {
+            if(!playerCover[OtherPlayer][i]){
+                playerPoints[Player][i] = 3
+                playerCover[Player][i] = true
+                playerCover[OtherPlayer][i] = false
+                colorButton[i] = Coloring[Player]
+                k = thisPlayer.value
+                thisPlayer.value = otherPlayer.value
+                otherPlayer.value = k
+            }
         } else {
-            colorButton[i] = Color(0xFF0FA6F7)
-            colorTile[i] = Color(0xFFC7F1FD)
-            player2Score.value += 3
-            playerCover[counter.value % 2][i] = true
+            if(playerCover[Player][i]){
+                playerPoints[Player][i]++
+                playerCover[Player][i] = true
+                playerCover[OtherPlayer][i] = false
+                colorButton[i] = Coloring[Player]
+                k = thisPlayer.value
+                thisPlayer.value = otherPlayer.value
+                otherPlayer.value = k
+            }
         }
-    } else {
-        var surround = mutableListOf(
-            i - 5,
+    } else if (playerPoints[Player][i] == 3 && playerCover[Player][i]) {
+        playerPoints[Player][i] = 0
+        colorButton[i] = Color(0xFFF2E6D1)
+        playerCover[Player][i] = false
+
+        var surround = mutableListOf<Int>(
+            i - c.value,
             i - 1,
             i + 1,
-            i + 5
+            i + c.value
         )
 
-        val surroundFilter = (surround.filter { it in 0..24 }).toMutableList()
+        var surroundFiltered = (surround.filter { it in 0.. r.value * c.value }).toMutableList()
 
-        if(i != 0 && i != 4 && i != 20 && i != 24){
-            if (i % 5 == 4) {
-                surroundFilter.remove(surroundFilter[2])
-            } else if (i % 5 == 0) {
-                surroundFilter.remove(surroundFilter[1])
+        if(i != 0 && i != r.value * c.value - 1 && i != c.value - 1 && i != (r.value - 1) * c.value) {
+            if(i % c.value == 0) {
+                surroundFiltered.remove(surroundFiltered[1])
+            } else if (i % c.value == c.value - 1) {
+                surroundFiltered.remove(surroundFiltered[2])
             }
-        } else if(i == 4) {
-            surroundFilter.remove(surroundFilter[1])
+        } else if(i == c.value - 1) {
+            surroundFiltered.remove(surroundFiltered[1])
+        } else if(i == (r.value - 1) * c.value) {
+            surroundFiltered.remove(surroundFiltered[1])
+        } else if(i == r.value * c.value - 1) {
+            surroundFiltered.remove(surroundFiltered[2])
         }
 
-        if(points[i] == 3) {
-            points[i] = 0
-            playerCover[counter.value % 2][i] = false
-            colorButton[i] = Color(0xFFF2E6D1)
-            colorTile[i] = Color(0xFFF2E6D1)
-
-            for (j in surroundFilter) {
-                if(counter.value % 2 == 1){
-                    colorButton[j] = Color(0xFFED6A5E)
-                    colorTile[j] = Color(0xFFF2D1CD)
+        for(j in surroundFiltered) {
+            if (playerPoints[Player][j] < 3 && playerPoints[OtherPlayer][j] < 3){
+                if(playerCover[Player][j]){
+                    playerPoints[Player][j]++
+                } else if(playerCover[OtherPlayer][j]) {
+                    playerPoints[Player][j] = playerPoints[OtherPlayer][j] + 1
+                    playerPoints[OtherPlayer][j] = 0
                 } else {
-                    colorButton[j] = Color(0xFF0FA6F7)
-                    colorTile[j] = Color(0xFFC7F1FD)
+                    playerPoints[Player][j] = 1
                 }
-            }
-
-            surroundFilter.forEach{ j ->
-                points[j]++
-                if(points[j] > 3) {
-                    incrementAndExpansion(j)
-                }
-                playerCover[counter.value % 2][j] = true
-            }
-        } else {
-            points[i]++
-
-            if(counter.value % 2 == 1){
-                colorButton[i] = Color(0xFFED6A5E)
-                colorTile[i] = Color(0xFFF2D1CD)
-            } else {
-                colorButton[i] = Color(0xFF0FA6F7)
-                colorTile[i] = Color(0xFFC7F1FD)
+                playerCover[Player][j] = true
+                playerCover[OtherPlayer][j] = false
+                colorButton[j] = Coloring[Player]
+            } else if(playerPoints[Player][j] == 3) {
+                incrementAndExpansion(j, Player, OtherPlayer)
+            } else if(playerPoints[OtherPlayer][j] == 3) {
+                incrementAndExpansion(j, OtherPlayer, Player)
             }
         }
+
+        k = thisPlayer.value
+        thisPlayer.value = otherPlayer.value
+        otherPlayer.value = k
     }
 }
 
+@Composable
+fun DisplayWinner() {
+    var winDialog by remember { mutableStateOf(false) }
+    AlertDialog(
+        onDismissRequest = {
+            winDialog = true
+        },
+        confirmButton = {
 
+        }
+    )
+}
