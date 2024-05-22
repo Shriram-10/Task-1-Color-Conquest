@@ -7,6 +7,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +17,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CutCornerShape
@@ -47,82 +51,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
-var clicked = mutableStateListOf<Boolean>(
-    false,false,false,false,false,
-    false,false,false,false,false,
-    false,false,false,false,false,
-    false,false,false,false,false,
-    false,false,false,false,false
-)
-
-
-var ColoringBG = mutableStateListOf<Color>(
-    Color(0xFF0FA6F7),Color(0xFFED6A5E)
-)
-
-var Coloring = mutableStateListOf<Color>(
-     Color(0xFFC7F1FD),Color(0xFFF2D1CD)
-)
-
-var colorTile = mutableStateListOf<Color>(
-    Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),
-    Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),
-    Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),
-    Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),
-    Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1)
-)
-
-var colorButton = mutableStateListOf<Color>(
-    Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),
-    Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),
-    Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),
-    Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),
-    Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1),Color(0xFFF2E6D1)
-)
-
-var playerCover : SnapshotStateList<SnapshotStateList<Boolean>> = mutableStateListOf(
-    mutableStateListOf(
-        false, false, false, false, false,
-        false, false, false, false, false,
-        false, false, false, false, false,
-        false, false, false, false, false,
-        false, false, false, false, false
-    ),
-    mutableStateListOf(
-        false, false, false, false, false,
-        false, false, false, false, false,
-        false, false, false, false, false,
-        false, false, false, false, false,
-        false, false, false, false, false
-    )
-)
-
-var playerPoints : SnapshotStateList<SnapshotStateList<Int>> = mutableStateListOf(
-    mutableStateListOf(
-        0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0
-    ),
-    mutableStateListOf(
-        0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0
-    )
-)
-
-var counter = mutableStateOf(0)
-var backgroundColor = mutableStateOf(Color(0xFF0FA6F7))
-var player1Score = mutableStateOf(0)
-var player2Score = mutableStateOf(0)
-val thisPlayer = mutableStateOf(1)
-val otherPlayer = mutableStateOf(0)
-val r = mutableStateOf(5)
-val c = mutableStateOf(5)
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GamePage(navController: NavController, name1: String?, name2: String?) {
@@ -130,11 +58,7 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
     val nonNullableString1: String = requireNotNull(name1) { "Player 1" }
     val nonNullableString2: String = requireNotNull(name2) { "Player 2" }
     var exitDialog by remember { mutableStateOf(false) }
-    var winnerDialog by remember { mutableStateOf(false) }
-
-    if(winnerDialog) {
-        DisplayWinner()
-    }
+    val name = if(pointsTotal[1]== 0) nonNullableString1 else nonNullableString2
 
     if(exitDialog) {
         AlertDialog(onDismissRequest = {
@@ -184,8 +108,8 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
                                 }
                             }
                             backgroundColor.value = Color(0xFFED6A5E)
-                            player1Score.value = 0
-                            player2Score.value = 0
+                            pointsTotal[0] = 0
+                            pointsTotal[1] = 0
                             for(i in 0 .. 1) {
                                 for (j in 0..24) {
                                     colorTile[j] = Color(0xFFF2E6D1)
@@ -279,11 +203,15 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
                     Button(
                         onClick = {},
                         modifier = Modifier
-                            .width(80.dp)
+                            .widthIn(min = 80.dp)
                             .height(56.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.DarkGray,
+                            containerColor = Color(48,50,58),
                             contentColor = Color(0xFF323232)
+                        ),
+                        border = BorderStroke(
+                            width = 4.dp,
+                            color = Color.Black
                         ),
                         elevation = ButtonDefaults.buttonElevation(
                             defaultElevation = 16.dp
@@ -294,7 +222,7 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
                         )
                     ){
                         Text(
-                            text = player2Score.value.toString(),
+                            text = pointsTotal[0].toString(),
                             fontWeight = FontWeight.Bold,
                             fontSize = 28.sp,
                             color = Color(0xFF0FA6F7)
@@ -303,23 +231,32 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
 
                     Spacer(modifier = Modifier.width(6.dp))
 
-                    Card(
-                        shape = CutCornerShape(
-                            topStartPercent = 45,
-                            bottomStartPercent = 45,
-                        ),
+                    Button(
+                        onClick = {},
+                        contentPadding = (
+                                    PaddingValues(
+                                        start = 32.dp,
+                                        top = 0.dp,
+                                        end = 16.dp,
+                                        bottom = 0.dp
+                                    )
+                                ),
                         modifier = Modifier
+                            .width(IntrinsicSize.Min)
                             .height(56.dp)
-                            .width(150.dp)
                             .clip(
                                 shape = RoundedCornerShape(
                                     topEndPercent = 10,
                                     bottomEndPercent = 10
                                 )
                             ),
-                        colors = CardDefaults.cardColors(
+                        shape = CutCornerShape(
+                            topStartPercent = 45,
+                            bottomStartPercent = 45,
+                        ),
+                        colors = ButtonDefaults.buttonColors(
                             contentColor = Color(0xFF0FA6F7),
-                            containerColor = Color.DarkGray
+                            containerColor = Color(48,50,58)
                         ),
                         border = BorderStroke(
                             width = 2.dp,
@@ -347,23 +284,34 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
                 modifier = Modifier.width(60.dp),
                 horizontalAlignment = Alignment.End,
             ){
-                Card(
-                    modifier = Modifier
-                        .size(48.dp),
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = 8.dp,
-                        pressedElevation = 12.dp
-                    ),
-                    shape = RoundedCornerShape(percent = 50),
-                    onClick = {
-                        exitDialog = true
-                    }
+                Box (
+                    contentAlignment = Alignment.Center
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.close),
-                        contentDescription = "Players",
-                        contentScale = ContentScale.Inside
+                    Button(
+                        modifier = Modifier
+                            .size(48.dp),
+                        elevation = ButtonDefaults.buttonElevation(
+                            defaultElevation = 8.dp,
+                            pressedElevation = 12.dp
+                        ),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.White,
+                            contentColor = Color.Gray
+                        ),
+                        shape = RoundedCornerShape(percent = 50),
+                        onClick = {
+                            exitDialog = true
+                        }
+                    ) {
+
+                    }
+                    Text(
+                        text = "X",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 28.sp,
+                        color = Color.Gray
                     )
+
                 }
 
                 Spacer(modifier = Modifier.width(24.dp))
@@ -388,63 +336,62 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
                             .padding(4.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        Button(
-                            modifier = Modifier
-                                .fillMaxSize(),
-                            shape = RoundedCornerShape(percent = 15),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = colorButton[i]
-                            ),
-                            onClick = {
-                                clicked[i] = true
-                            },
-                            elevation = ButtonDefaults.buttonElevation(
-                                defaultElevation = 8.dp,
-                                pressedElevation = 12.dp
-                            )
+                        Box(
+                            modifier = Modifier.fillMaxSize()
+                                .fillMaxWidth(),
+                            contentAlignment = Alignment.Center
                         ){
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ){
-                                Box(
-                                    modifier = Modifier
-                                        .clip(shape = RoundedCornerShape(50)),
-                                    contentAlignment = Alignment.Center
-                                ){
-
-                                }
-                                Text(
-                                    text = if (playerPoints[0][i] == 0) playerPoints[1][i].toString() else playerPoints[0][i].toString(),
-                                    fontWeight = FontWeight.ExtraBold,
-                                    fontSize = 32.sp,
-                                    color = Color.Black
+                            Button(
+                                modifier = Modifier
+                                    .fillMaxSize(),
+                                shape = RoundedCornerShape(percent = 15),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = colorTile[i]
+                                ),
+                                onClick = {
+                                    clicked[i] = true
+                                },
+                                elevation = ButtonDefaults.buttonElevation(
+                                    defaultElevation = 8.dp,
+                                    pressedElevation = 12.dp
                                 )
+                            ){
+
                             }
+
+                            Button (
+                                onClick = {
+                                    clicked[i] = true
+                                },
+                                modifier = Modifier.fillMaxSize(0.8f),
+                                shape = RoundedCornerShape(percent = 50),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = colorCircle[i],
+                                ),
+                            ){
+
+                            }
+
+                            Text(
+                                text = if (playerPoints[0][i] == 0 && playerPoints[1][i] == 0) "" else if (playerPoints[0][i] == 0) playerPoints[1][i].toString() else playerPoints[0][i].toString(),
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 32.sp,
+                                color = Color.White
+                            )
                         }
                     }
                     if(clicked[i]) {
-                        if (counter.value == 1 || counter.value == 0) {
-                            if(!playerCover[otherPlayer.value][i]) {
-                                counter.value++
-                                incrementAndExpansion(i, thisPlayer.value, otherPlayer.value)
-                                clicked[i] = false
-                                player1Score.value = playerPoints[1].sum()
-                                player2Score.value = playerPoints[0].sum()
-                                if(player1Score.value == 0 || player2Score.value == 0) {
-                                    winnerDialog = true
-                                }
-                            } else if (playerCover[otherPlayer.value][i]){
-                                clicked[i] = false
+                        allowClick(i)
+                        pointsSum(counter.value)
+                        clicked[i] = false
+                        if ((pointsTotal[0] == 0 || pointsTotal[1] == 0) && counter.value > 2){
+                            winDialog.value = true
+                            if (pointsTotal[0] == 0 && counter.value > 2) {
+                                DisplayWinner(name1)
+                            } else if (pointsTotal[1] == 0 && counter.value > 2) {
+                                DisplayWinner(name2)
                             }
-                        } else {
-                            counter.value++
-                            incrementAndExpansion(i, thisPlayer.value, otherPlayer.value)
-                            clicked[i] = false
-                            player1Score.value = playerPoints[1].sum()
-                            player2Score.value = playerPoints[0].sum()
                         }
-
                     }
                 }
             }
@@ -456,10 +403,19 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.End
         ){
-            Card(
+            Button(
+                onClick = {},
+                contentPadding = (
+                        PaddingValues(
+                            start = 16.dp,
+                            top = 0.dp,
+                            end = 32.dp,
+                            bottom = 0.dp
+                        )
+                        ),
                 modifier = Modifier
                     .height(56.dp)
-                    .width(150.dp)
+                    .width(IntrinsicSize.Min)
                     .clip(
                         shape = RoundedCornerShape(
                             topStartPercent = 10,
@@ -470,8 +426,8 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
                     topEndPercent = 45,
                     bottomEndPercent = 45,
                 ),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color.DarkGray,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(48,50,58),
                     contentColor = Color(0xFFED6A5E)
                 ),
                 border = BorderStroke(
@@ -497,14 +453,18 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
             Button(
                 onClick = {},
                 modifier = Modifier
-                    .width(80.dp)
+                    .widthIn(min = 80.dp)
                     .height(56.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.DarkGray,
+                    containerColor = Color(48,50,58),
                     contentColor = Color(0xFF323232)
                 ),
                 elevation = ButtonDefaults.buttonElevation(
                     defaultElevation = 16.dp
+                ),
+                border = BorderStroke(
+                    width = 4.dp,
+                    color = Color.Black
                 ),
                 shape = RoundedCornerShape(
                     topStartPercent = 50,
@@ -512,7 +472,7 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
                 )
             ){
                 Text(
-                    text = player1Score.value.toString(),
+                    text = pointsTotal[1].toString(),
                     fontWeight = FontWeight.Bold,
                     fontSize = 28.sp,
                     color = Color(0xFFED6A5E)
@@ -520,97 +480,4 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
             }
         }
     }
-}
-
-fun incrementAndExpansion(i: Int, Player: Int, OtherPlayer: Int) {
-    var k: Int = 0
-    backgroundColor.value = ColoringBG[Player]
-
-    if (playerPoints[Player][i] < 3) {
-        if(counter.value == 1 || counter.value == 2) {
-            if(!playerCover[OtherPlayer][i]){
-                playerPoints[Player][i] = 3
-                playerCover[Player][i] = true
-                playerCover[OtherPlayer][i] = false
-                colorButton[i] = Coloring[Player]
-                k = thisPlayer.value
-                thisPlayer.value = otherPlayer.value
-                otherPlayer.value = k
-            }
-        } else {
-            if(playerCover[Player][i]){
-                playerPoints[Player][i]++
-                playerCover[Player][i] = true
-                playerCover[OtherPlayer][i] = false
-                colorButton[i] = Coloring[Player]
-                k = thisPlayer.value
-                thisPlayer.value = otherPlayer.value
-                otherPlayer.value = k
-            }
-        }
-    } else if (playerPoints[Player][i] == 3 && playerCover[Player][i]) {
-        playerPoints[Player][i] = 0
-        colorButton[i] = Color(0xFFF2E6D1)
-        playerCover[Player][i] = false
-
-        var surround = mutableListOf<Int>(
-            i - c.value,
-            i - 1,
-            i + 1,
-            i + c.value
-        )
-
-        var surroundFiltered = (surround.filter { it in 0.. r.value * c.value }).toMutableList()
-
-        if(i != 0 && i != r.value * c.value - 1 && i != c.value - 1 && i != (r.value - 1) * c.value) {
-            if(i % c.value == 0) {
-                surroundFiltered.remove(surroundFiltered[1])
-            } else if (i % c.value == c.value - 1) {
-                surroundFiltered.remove(surroundFiltered[2])
-            }
-        } else if(i == c.value - 1) {
-            surroundFiltered.remove(surroundFiltered[1])
-        } else if(i == (r.value - 1) * c.value) {
-            surroundFiltered.remove(surroundFiltered[1])
-        } else if(i == r.value * c.value - 1) {
-            surroundFiltered.remove(surroundFiltered[2])
-        }
-
-        for(j in surroundFiltered) {
-            if (playerPoints[Player][j] < 3 && playerPoints[OtherPlayer][j] < 3){
-                if(playerCover[Player][j]){
-                    playerPoints[Player][j]++
-                } else if(playerCover[OtherPlayer][j]) {
-                    playerPoints[Player][j] = playerPoints[OtherPlayer][j] + 1
-                    playerPoints[OtherPlayer][j] = 0
-                } else {
-                    playerPoints[Player][j] = 1
-                }
-                playerCover[Player][j] = true
-                playerCover[OtherPlayer][j] = false
-                colorButton[j] = Coloring[Player]
-            } else if(playerPoints[Player][j] == 3) {
-                incrementAndExpansion(j, Player, OtherPlayer)
-            } else if(playerPoints[OtherPlayer][j] == 3) {
-                incrementAndExpansion(j, OtherPlayer, Player)
-            }
-        }
-
-        k = thisPlayer.value
-        thisPlayer.value = otherPlayer.value
-        otherPlayer.value = k
-    }
-}
-
-@Composable
-fun DisplayWinner() {
-    var winDialog by remember { mutableStateOf(false) }
-    AlertDialog(
-        onDismissRequest = {
-            winDialog = true
-        },
-        confirmButton = {
-
-        }
-    )
 }
