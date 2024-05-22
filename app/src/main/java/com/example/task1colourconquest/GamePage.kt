@@ -53,10 +53,8 @@ import androidx.navigation.NavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GamePage(navController: NavController, name1: String?, name2: String?) {
+fun GamePage(navController: NavController) {
 
-    val nonNullableString1: String = requireNotNull(name1) { "Player 1" }
-    val nonNullableString2: String = requireNotNull(name2) { "Player 2" }
     var exitDialog by remember { mutableStateOf(false) }
     val name = if(pointsTotal[1]== 0) nonNullableString1 else nonNullableString2
 
@@ -474,9 +472,9 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
     }
     if (winner.value != -1) {
         if (winner.value == 0) {
-            DisplayWinner(name = nonNullableString2)
+            DisplayWinner(navController = navController)
         } else if (winner.value == 1) {
-            DisplayWinner(name = nonNullableString1)
+            DisplayWinner(navController = navController)
         }
     }
 }

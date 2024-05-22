@@ -19,23 +19,11 @@ fun Navigation() {
         composable(route = Screen.PlayerInformation.route) {
             PlayerPage(navController = navController)
         }
-        composable(
-            route = Screen.GamePage.route + "/{name1}/{name2}",
-            arguments = listOf(
-                navArgument("name1") {
-                    type = NavType.StringType
-                    defaultValue = "Player 1"
-                },
-                navArgument("name2") {
-                    type = NavType.StringType
-                    defaultValue = "Player 2"
-                }
-            )
-        ){entry ->
-            val name1 = entry.arguments?.getString("name1")
-            val name2 = entry.arguments?.getString("name2")
-
-            GamePage(navController = navController, name1 = name1, name2 = name2)
+        composable(route = Screen.GamePage.route) {
+            GamePage(navController = navController)
+        }
+        composable(route = Screen.GameResult.route) {
+            DisplayWinner(navController = navController)
         }
     }
 }

@@ -51,9 +51,6 @@ import androidx.navigation.compose.rememberNavController
 @Composable
 fun PlayerPage(navController: NavController) {
 
-    var player1Name by remember { mutableStateOf("") }
-    var player2Name by remember { mutableStateOf("") }
-
     Column (
         modifier = Modifier
             .fillMaxSize()
@@ -150,8 +147,8 @@ fun PlayerPage(navController: NavController) {
                         )
                     }
                     BasicTextField(
-                        value = player1Name,
-                        onValueChange = {player1Name = it},
+                        value = player1Name.value,
+                        onValueChange = {player1Name.value = it},
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 24.dp),
@@ -205,8 +202,8 @@ fun PlayerPage(navController: NavController) {
                         )
                     }
                     BasicTextField(
-                        value = player2Name,
-                        onValueChange = {player2Name = it},
+                        value = player2Name.value,
+                        onValueChange = {player2Name.value = it},
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 24.dp),
@@ -241,7 +238,7 @@ fun PlayerPage(navController: NavController) {
 
         Button(
             onClick = {
-                navController.navigate(Screen.GamePage.withArgs(player1Name, player2Name))
+                navController.navigate(Screen.GamePage.route)
             },
             modifier = Modifier
                 .width(164.dp)
