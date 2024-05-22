@@ -1,5 +1,6 @@
 package com.example.task1colourconquest
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 fun allowClick(i: Int){
@@ -29,6 +30,11 @@ fun increment(i: Int, caller: Int){
             coverTracker(i)
             playerPoints[thisPlayer.value][i] = 0
             genList(i)
+    }
+
+    pointsSum(counter.value)
+    if ((pointsTotal[0] == 0 || pointsTotal[1] == 0) && counter.value > 6) {
+        resultDeterminer()
     }
     if (caller == 0){
         goNextPlayer()
@@ -84,7 +90,7 @@ fun genList(i: Int){
         i + c.value
     )
 
-    val surroundFiltered = (surround.filter { it in 0.. r.value * c.value }).toMutableList()
+    val surroundFiltered = (surround.filter { it in 0..<r.value * c.value }).toMutableList()
 
     if(i != 0 && i != r.value * c.value - 1 && i != c.value - 1 && i != (r.value - 1) * c.value) {
         if(i % c.value == 0) {
@@ -115,5 +121,15 @@ fun pointsSum(counter:Int){
     for(i in 0..<r.value * c.value){
             pointsTotal[0] += playerPoints[0][i]
             pointsTotal[1] += playerPoints[1][i]
+    }
+}
+
+fun resultDeterminer(){
+    if (pointsTotal[0] == 0) {
+        winner.value = 1
+    } else if (pointsTotal[1] == 0) {
+        winner.value = 0
+    } else {
+        winner.value = -1
     }
 }

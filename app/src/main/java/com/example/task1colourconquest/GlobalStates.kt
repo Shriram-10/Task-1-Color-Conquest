@@ -10,6 +10,8 @@ import androidx.compose.ui.graphics.Color
 
 var winDialog = mutableStateOf(false)
 
+var winner = mutableStateOf(-1)
+
 var clicked = mutableStateListOf<Boolean>(
     false,false,false,false,false,
     false,false,false,false,false,
@@ -83,3 +85,6 @@ val thisPlayer = mutableStateOf(1)
 val otherPlayer = mutableStateOf(0)
 val r = mutableStateOf(5)
 val c = mutableStateOf(5)
+
+val nonNullableString1: String = requireNotNull(" ") { "Player 1" }
+val nonNullableString2: String = requireNotNull(" ") { "Player 2" }

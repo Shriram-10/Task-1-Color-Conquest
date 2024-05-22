@@ -337,7 +337,8 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
                         contentAlignment = Alignment.Center
                     ) {
                         Box(
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier
+                                .fillMaxSize()
                                 .fillMaxWidth(),
                             contentAlignment = Alignment.Center
                         ){
@@ -382,16 +383,7 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
                     }
                     if(clicked[i]) {
                         allowClick(i)
-                        pointsSum(counter.value)
                         clicked[i] = false
-                        if ((pointsTotal[0] == 0 || pointsTotal[1] == 0) && counter.value > 2){
-                            winDialog.value = true
-                            if (pointsTotal[0] == 0 && counter.value > 2) {
-                                DisplayWinner(name1)
-                            } else if (pointsTotal[1] == 0 && counter.value > 2) {
-                                DisplayWinner(name2)
-                            }
-                        }
                     }
                 }
             }
@@ -478,6 +470,13 @@ fun GamePage(navController: NavController, name1: String?, name2: String?) {
                     color = Color(0xFFED6A5E)
                 )
             }
+        }
+    }
+    if (winner.value != -1) {
+        if (winner.value == 0) {
+            DisplayWinner(name = nonNullableString2)
+        } else if (winner.value == 1) {
+            DisplayWinner(name = nonNullableString1)
         }
     }
 }
