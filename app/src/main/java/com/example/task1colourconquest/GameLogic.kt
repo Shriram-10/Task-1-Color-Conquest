@@ -127,10 +127,10 @@ fun pointsSum(counter:Int){
 fun resultDeterminer(){
     if (pointsTotal[0] == 0) {
         winner.value = 1
-        winnerName.value = nonNullableString1
+        winnerName.value = player1Name.value
     } else if (pointsTotal[1] == 0) {
         winner.value = 0
-        winnerName.value = nonNullableString2
+        winnerName.value = player2Name.value
     } else {
         winner.value = -1
     }

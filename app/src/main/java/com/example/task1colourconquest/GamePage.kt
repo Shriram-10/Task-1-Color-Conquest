@@ -56,7 +56,7 @@ import androidx.navigation.NavController
 fun GamePage(navController: NavController) {
 
     var exitDialog by remember { mutableStateOf(false) }
-    val name = if(pointsTotal[1]== 0) nonNullableString1 else nonNullableString2
+    val name = if(pointsTotal[1]== 0) player1Name.value else player2Name.value
 
     if(exitDialog) {
         AlertDialog(onDismissRequest = {
@@ -267,7 +267,7 @@ fun GamePage(navController: NavController) {
                         ){
 
                             Text(
-                                text = nonNullableString2.uppercase(),
+                                text = player2Name.value.uppercase(),
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 28.sp,
                                 color = Color(0xFF0FA6F7),
@@ -430,7 +430,7 @@ fun GamePage(navController: NavController) {
                     contentAlignment = Alignment.Center
                 ){
                     Text(
-                        text = nonNullableString1.uppercase(),
+                        text = player1Name.value.uppercase(),
                         fontWeight = FontWeight.Bold,
                         fontSize = 28.sp,
                         color = Color(0xFFED6A5E)

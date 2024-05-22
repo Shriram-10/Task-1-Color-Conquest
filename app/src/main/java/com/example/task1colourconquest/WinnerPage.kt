@@ -120,7 +120,9 @@ fun DisplayWinner(navController: NavController) {
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        navController.navigate(Screen.HomePage.route)
+                    },
                     modifier = Modifier
                         .width(275.dp),
                     colors = ButtonDefaults.buttonColors(

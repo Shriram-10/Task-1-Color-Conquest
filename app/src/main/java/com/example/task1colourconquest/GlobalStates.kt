@@ -86,9 +86,6 @@ val otherPlayer = mutableStateOf(0)
 val r = mutableStateOf(5)
 val c = mutableStateOf(5)
 
-val nonNullableString1: String = requireNotNull(" ") { "Player 1" }
-val nonNullableString2: String = requireNotNull(" ") { "Player 2" }
-
 var player1Name = mutableStateOf("")
 var player2Name = mutableStateOf("")
 
